@@ -64,7 +64,7 @@ class HomePage extends StatelessWidget {
                     image: AssetImage('assets/no-image.png'),
                   )
                 : Hero(
-                    tag: prod.id,
+                    tag: prod.id ?? "no-hero",
                     child: new FadeInImage(
                       placeholder: new AssetImage('assets/loading.gif'),
                       image: NetworkImage(prod.fotoUrl),

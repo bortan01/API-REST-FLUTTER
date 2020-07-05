@@ -62,8 +62,8 @@ class _ProductoPageState extends State<ProductoPage> {
     return FloatingActionButton(
       child: new Icon(Icons.add),
       backgroundColor: Colors.deepPurple,
-      onPressed: () => Navigator.pushReplacementNamed(context, "producto",
-          arguments: producto),
+      onPressed: () =>
+          Navigator.pushNamed(context, "producto", arguments: producto),
     );
   }
 
@@ -111,7 +111,7 @@ class _ProductoPageState extends State<ProductoPage> {
     );
   }
 
-  void submit() async {
+  submit() async {
     if (!formKey.currentState.validate()) {
       return;
     }
@@ -134,11 +134,10 @@ class _ProductoPageState extends State<ProductoPage> {
       productoProvider.editarProducto(producto);
     }
     mostrarSnackbar("Registro guardado");
-    Timer(Duration(seconds: 3), () {
-      setState(() {
-        _guardado = false;
-        Navigator.pushReplacementNamed(context, 'home');
-      });
+
+    setState(() {
+      _guardado = false;
+      Navigator.pushReplacementNamed(context, 'routeName');
     });
   }
 
@@ -166,11 +165,12 @@ class _ProductoPageState extends State<ProductoPage> {
   void _seleccionarFoto() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    if (_foto != null) {
+    if (pickedFile != null) {
       producto.fotoUrl = null;
     }
 
     setState(() {
+      print("dentro del state ");
       _foto = File(pickedFile.path);
     });
   }
