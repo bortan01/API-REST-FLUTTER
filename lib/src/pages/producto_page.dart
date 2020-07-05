@@ -1,5 +1,4 @@
 import 'dart:async';
-//import 'dart:ffi';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,7 +13,8 @@ class ProductoPage extends StatefulWidget {
 }
 
 class _ProductoPageState extends State<ProductoPage> {
-  File foto;
+  final picker = ImagePicker();
+  File _image;
 
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -158,12 +158,11 @@ class _ProductoPageState extends State<ProductoPage> {
   }
 
   void _seleccionarFoto() async {
-    foto = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (foto != null) {
-      //limpieza de buffer
-    }
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {});
+    setState(() {
+      _image = File(pickedFile.path);
+    });
   }
 
   void _tomarFoto() {}
@@ -172,11 +171,18 @@ class _ProductoPageState extends State<ProductoPage> {
     if (producto.fotoUrl != null) {
       return Container();
     } else {
-      return Image(
-        //si la foto tiene info y si la foto tiene path se mostrara si no se mostra la imagen por defecto
-        image: AssetImage(foto?.path ?? 'assets/no-image.png'),
-        height: 300.0,
-        fit: BoxFit.cover,
+      return Center(
+        //pregunta si existe la imagen
+        child: (_image == null)
+            ?
+            //si la imagen no existe se carga una imagen por defecto
+            Image(
+                image: AssetImage('assets/no-image.png'),
+                height: 300.0,
+                fit: BoxFit.cover)
+            :
+            //de lo contrario se carga la imagen cargda
+            Image.file(_image, height: 300.0, fit: BoxFit.cover),
       );
     }
   }
