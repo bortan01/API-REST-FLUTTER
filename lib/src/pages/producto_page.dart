@@ -62,8 +62,8 @@ class _ProductoPageState extends State<ProductoPage> {
     return FloatingActionButton(
       child: new Icon(Icons.add),
       backgroundColor: Colors.deepPurple,
-      onPressed: () =>
-          Navigator.pushNamed(context, "producto", arguments: producto),
+      onPressed: () => Navigator.pushReplacementNamed(context, "producto",
+          arguments: producto),
     );
   }
 
@@ -137,7 +137,7 @@ class _ProductoPageState extends State<ProductoPage> {
     Timer(Duration(seconds: 3), () {
       setState(() {
         _guardado = false;
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, 'home');
       });
     });
   }
@@ -185,12 +185,16 @@ class _ProductoPageState extends State<ProductoPage> {
 
   Widget _mostrarFoto() {
     if (producto.fotoUrl != null) {
-      return new FadeInImage(
-        placeholder: new AssetImage('assets/loading.gif'),
-        image: NetworkImage(producto.fotoUrl),
-        height: 300.0,
-        width: double.infinity,
-        fit: BoxFit.contain,
+      return Hero(
+        ///esto es para evitar problema si no existe el id del producto, como cuando no se a creado
+        tag: producto.id ?? "no-hero",
+        child: new FadeInImage(
+          placeholder: new AssetImage('assets/loading.gif'),
+          image: NetworkImage(producto.fotoUrl),
+          height: 300.0,
+          width: double.infinity,
+          fit: BoxFit.contain,
+        ),
       );
     } else {
       return Center(

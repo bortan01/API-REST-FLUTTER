@@ -63,12 +63,15 @@ class HomePage extends StatelessWidget {
                 ? Image(
                     image: AssetImage('assets/no-image.png'),
                   )
-                : new FadeInImage(
-                    placeholder: new AssetImage('assets/loading.gif'),
-                    image: NetworkImage(prod.fotoUrl),
-                    height: 300.0,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
+                : Hero(
+                    tag: prod.id,
+                    child: new FadeInImage(
+                      placeholder: new AssetImage('assets/loading.gif'),
+                      image: NetworkImage(prod.fotoUrl),
+                      height: 300.0,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
                   ),
             new ListTile(
               title: Text('${prod.titulo} - ${prod.valor}'),
