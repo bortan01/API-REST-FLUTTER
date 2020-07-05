@@ -137,7 +137,7 @@ class _ProductoPageState extends State<ProductoPage> {
 
     setState(() {
       _guardado = false;
-      Navigator.pushReplacementNamed(context, 'routeName');
+      Navigator.pushReplacementNamed(context, 'home');
     });
   }
 
