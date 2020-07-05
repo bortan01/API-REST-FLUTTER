@@ -14,7 +14,7 @@ class ProductoPage extends StatefulWidget {
 
 class _ProductoPageState extends State<ProductoPage> {
   final picker = ImagePicker();
-  File _image;
+  File _foto;
 
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -111,7 +111,7 @@ class _ProductoPageState extends State<ProductoPage> {
     );
   }
 
-  void submit() {
+  void submit() async {
     if (!formKey.currentState.validate()) {
       return;
     }
@@ -120,6 +120,12 @@ class _ProductoPageState extends State<ProductoPage> {
     setState(() {
       _guardado = true;
     });
+
+    if (_foto != null) {
+      ProductoProvider productoProvider = new ProductoProvider();
+      producto.fotoUrl = await productoProvider.subirImagen(_foto);
+    }
+
     final productoProvider = new ProductoProvider();
     if (producto.id == null) {
       productoProvider.crearProducto(producto);
@@ -160,20 +166,36 @@ class _ProductoPageState extends State<ProductoPage> {
   void _seleccionarFoto() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
+    if (_foto != null) {
+      producto.fotoUrl = null;
+    }
+
     setState(() {
-      _image = File(pickedFile.path);
+      _foto = File(pickedFile.path);
     });
   }
 
-  void _tomarFoto() {}
+  void _tomarFoto() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      _foto = File(pickedFile.path);
+    });
+  }
 
   Widget _mostrarFoto() {
     if (producto.fotoUrl != null) {
-      return Container();
+      return new FadeInImage(
+        placeholder: new AssetImage('assets/loading.gif'),
+        image: NetworkImage(producto.fotoUrl),
+        height: 300.0,
+        width: double.infinity,
+        fit: BoxFit.contain,
+      );
     } else {
       return Center(
         //pregunta si existe la imagen
-        child: (_image == null)
+        child: (_foto == null)
             ?
             //si la imagen no existe se carga una imagen por defecto
             Image(
@@ -182,7 +204,7 @@ class _ProductoPageState extends State<ProductoPage> {
                 fit: BoxFit.cover)
             :
             //de lo contrario se carga la imagen cargda
-            Image.file(_image, height: 300.0, fit: BoxFit.cover),
+            Image.file(_foto, height: 300.0, fit: BoxFit.cover),
       );
     }
   }

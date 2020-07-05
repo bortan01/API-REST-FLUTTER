@@ -56,12 +56,29 @@ class HomePage extends StatelessWidget {
         productoProvider.borraProducto(prod.id);
       },
       key: UniqueKey(),
-      child: new ListTile(
-        title: Text('${prod.titulo} - ${prod.valor}'),
-        subtitle: new Text(prod.id),
-        onTap: () {
-          Navigator.pushNamed(context, 'producto', arguments: prod);
-        },
+      child: new Card(
+        child: new Column(
+          children: <Widget>[
+            (prod.fotoUrl == null)
+                ? Image(
+                    image: AssetImage('assets/no-image.png'),
+                  )
+                : new FadeInImage(
+                    placeholder: new AssetImage('assets/loading.gif'),
+                    image: NetworkImage(prod.fotoUrl),
+                    height: 300.0,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
+            new ListTile(
+              title: Text('${prod.titulo} - ${prod.valor}'),
+              subtitle: new Text(prod.id),
+              onTap: () {
+                Navigator.pushNamed(context, 'producto', arguments: prod);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
