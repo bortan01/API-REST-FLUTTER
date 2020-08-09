@@ -3,7 +3,7 @@ import 'package:formvalidation/src/bloc/provider.dart';
 import 'package:formvalidation/src/providers/usuario_provider.dart';
 import 'package:formvalidation/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class RegistroPage extends StatelessWidget {
   final usuarioProvider = new UsuarioProvider();
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class LoginPage extends StatelessWidget {
                 ]),
             child: Column(
               children: <Widget>[
-                Text('Ingreso', style: TextStyle(fontSize: 20.0)),
+                Text('Crear Cuenta', style: TextStyle(fontSize: 20.0)),
                 SizedBox(height: 60.0),
                 _crearEmail(bloc),
                 SizedBox(height: 30.0),
@@ -55,9 +55,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           new FlatButton(
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, "registro"),
-              child: Text("Crear nueva cuenta")),
+              onPressed: () => Navigator.pushReplacementNamed(context, "login"),
+              child: Text("Ya tienes cuenta, Login")),
           SizedBox(height: 100.0)
         ],
       ),
@@ -123,14 +122,16 @@ class LoginPage extends StatelessWidget {
             elevation: 0.0,
             color: Colors.deepPurple,
             textColor: Colors.white,
-            onPressed: snapshot.hasData ? () => _login(bloc, context) : null);
+            onPressed:
+                snapshot.hasData ? () => _register(bloc, context) : null);
       },
     );
   }
 
-  _login(LoginBloc bloc, BuildContext context) async {
-    Map info =
-        await usuarioProvider.login(email: bloc.email, password: bloc.password);
+  _register(LoginBloc bloc, BuildContext context) async {
+    //Navigator.pushReplacementNamed(context, 'home');
+    Map info = await usuarioProvider.nuevoUsuario(
+        email: bloc.email, password: bloc.password);
     if (info['ok']) {
       Navigator.pushReplacementNamed(context, 'home');
     } else {

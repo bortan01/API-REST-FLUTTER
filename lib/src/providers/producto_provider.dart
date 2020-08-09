@@ -67,11 +67,9 @@ class ProductoProvider {
     //mimeType[0] es la imagen mimeType[1] es la extencion
     final file = await http.MultipartFile.fromPath('file', foto.path,
         contentType: MediaType(mimeType[0], mimeType[1]));
-
     imageUploadRequest.files.add(file);
 
     //ejecutamos la peticion
-
     final streamResponse = await imageUploadRequest.send();
     final res = await http.Response.fromStream(streamResponse);
 
@@ -79,7 +77,6 @@ class ProductoProvider {
       print("algo salio mal");
       return null;
     }
-
     //extraemos el url de la respuesta
     final respData = json.decode(res.body);
     return respData['secure_url'];
