@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:formvalidation/src/bloc/provider.dart';
 import 'package:formvalidation/src/models/producto_model.dart';
 import 'package:formvalidation/src/providers/producto_provider.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final productosBloc = Provider.productosBloc(context);
+    productosBloc.cargarProductos();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("home"),
       ),
-      body: crearListado(),
+      body: crearListado(productosBloc),
       floatingActionButton: crearBotton(context),
     );
   }
 
-  crearListado() {
-    ProductoProvider productoProvider = new ProductoProvider();
-    return FutureBuilder(
-      future: productoProvider.cargarProductos(),
+  crearListado(ProductosBloc productosBloc) {
+    return StreamBuilder(
+      stream: productosBloc.productosStream,
       builder:
           (BuildContext context, AsyncSnapshot<List<ProductoModel>> snapshot) {
         if (snapshot.hasData) {
@@ -25,7 +27,7 @@ class HomePage extends StatelessWidget {
           return ListView.builder(
               itemCount: productos.length,
               itemBuilder: (context, i) {
-                return _crearItem(context, productos[i]);
+                return _crearItem(context, productos[i], productosBloc);
               });
         } else {
           return Center(
@@ -44,8 +46,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _crearItem(BuildContext context, ProductoModel prod) {
-    ProductoProvider productoProvider = new ProductoProvider();
+  Widget _crearItem(
+      BuildContext context, ProductoModel prod, ProductosBloc prodBloc) {
+    //ProductoProvider productoProvider = new ProductoProvider();
     return Dismissible(
       background: Container(
         color: Colors.red,
@@ -53,7 +56,7 @@ class HomePage extends StatelessWidget {
       //DIRECION ES IZQUIERDA O DERECHA
       onDismissed: (direccion) {
         // ESTO SE DISPARA CUANDO SE DESLIZA EL ELEMENTO
-        productoProvider.borraProducto(prod.id);
+        prodBloc.borraarProducto(prod.id);
       },
       key: UniqueKey(),
       child: new Card(

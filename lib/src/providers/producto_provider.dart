@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:formvalidation/src/preferencias_usuario/preferencias_usuario.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:formvalidation/src/models/producto_model.dart';
 import 'package:http_parser/http_parser.dart';
@@ -7,9 +8,11 @@ import 'package:http/http.dart' as http;
 
 class ProductoProvider {
   final String _url = "https://flutter-varios-11491.firebaseio.com";
+  final _preferencia = new PreferenciasUsuario();
 
   Future<bool> crearProducto(ProductoModel producto) async {
-    final url = '$_url/productos.json';
+    //USANDO TOKEN
+    final url = '$_url/productos.json?auth=${_preferencia.token}';
     final respuesta = await http.post(url, body: productoModelToJson(producto));
     final decodeData = json.decode(respuesta.body);
     print(decodeData);
@@ -17,8 +20,8 @@ class ProductoProvider {
   }
 
   Future<List<ProductoModel>> cargarProductos() async {
-    print("pidiendo datos");
-    final url = '$_url/productos.json';
+    //USANDO TOKEN
+    final url = '$_url/productos.json?auth=${_preferencia.token}';
     final respuesta = await http.get(url);
     final Map<String, dynamic> decodeData = json.decode(respuesta.body);
     final List<ProductoModel> listProdcutos = new List();
@@ -26,6 +29,11 @@ class ProductoProvider {
     if (decodeData == null) {
       return [];
     }
+    //POR SI EL TOKEN EXPIRO
+    if (decodeData['error'] != null) {
+      return [];
+    }
+
     decodeData.forEach((id, prod) {
       final productoTemporal = ProductoModel.fromJson(prod);
       productoTemporal.id = id;
@@ -35,7 +43,8 @@ class ProductoProvider {
   }
 
   Future<int> borraProducto(String id) async {
-    final url = '$_url/productos/$id.json';
+    //USANDO TOKEN
+    final url = '$_url/productos/$id.json?auth=${_preferencia.token}';
     final respuesta = await http.delete(url);
     final Map<String, dynamic> decodeData = json.decode(respuesta.body);
     print(decodeData);
@@ -48,7 +57,9 @@ class ProductoProvider {
   }
 
   Future<bool> editarProducto(ProductoModel producto) async {
-    final url = '$_url/productos/${producto.id}.json';
+    //USANDO TOKEN
+    final url =
+        '$_url/productos/${producto.id}.json?auth=${_preferencia.token}';
     final respuesta = await http.put(url, body: productoModelToJson(producto));
     final decodeData = json.decode(respuesta.body);
     print(decodeData);
